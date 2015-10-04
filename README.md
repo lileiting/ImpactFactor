@@ -108,8 +108,3 @@ Horticultre
 
 * [Horticulture Research](http://www.nature.com/hortres/)
 * [Tree Genetics & Genomes](http://link.springer.com/journal/11295)
-* [Tree Genetics & Genomes](http://link.springer.com/journal/11295)
-
-
-
-
