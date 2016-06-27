@@ -28,10 +28,16 @@ end_of_usage
 sub main{
     usage unless @ARGV == 1;
     my $pattern = shift @ARGV;
-    my @results;
-    print STDERR "----Searching: $pattern\n";
     
-    my $scidata = "$FindBin::RealBin/data_sci_2014.csv";
+    my ($year, 
+        $journal_title_index, 
+        $ISSN_index, 
+        $IF_index,
+        $articles_index, )
+    = (2014, 1, 2, 4, 7);
+#     =(2015, 2, 3, 6, 11);    
+    my @results;
+    my $scidata = "$FindBin::RealBin/data_sci_$year.csv";
     open my $fh, "<", $scidata or die "$scidata: $!";
     
     # title
@@ -42,27 +48,25 @@ sub main{
     # journal data
     while(<$fh>){
         chomp;
-        my @txt = split(/,/);
-        
-        # impact factor
-        $txt[4] = 0 unless $txt[4];
-        
-        # Journal title
-        if($txt[1] =~ /$pattern/i){
-            push @results,[@txt];
-        }
+        my @a = split(/,/);
+        $a[$IF_index] = 0 unless $a[$IF_index];
+        push @results,[@a] if $a[$journal_title_index] =~ /$pattern/i;
     }
     close $fh;
 
-    die "----WARNING: No journals found with names contain the text \"$pattern\"! Please specify another keyword.\n" 
-        unless @results;
+    die "\nWARNING: Nothing found for \"$pattern\"\n\n" unless @results;
     my $count = 0;
-    for(sort{$b->[4] <=> $a->[4]}@results){
+    print "\n";
+    for my $a (sort{$b->[$IF_index] <=> $a->[$IF_index]}@results){
         $count++;
-        printf("%4s:|IF=%8.3f |Articles=%6d |ISSN=$_->[2]|Name=$_->[1]\n",
-            $count,$_->[4],$_->[7]?$_->[7]:0);
+        printf "%4s:|IF=%8.3f |Articles=%6d |ISSN=%s|Name=%s\n",
+            $count, 
+            $a->[$IF_index], 
+            $a->[$articles_index] ? $a->[$articles_index] : 0, 
+            $a->[$ISSN_index],
+            $a->[$journal_title_index];
     }
-    
+    print "\n";
 }
 
 main() unless caller;
