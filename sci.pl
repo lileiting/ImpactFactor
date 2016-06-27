@@ -34,8 +34,8 @@ sub main{
         $ISSN_index, 
         $IF_index,
         $articles_index, )
-    = (2014, 1, 2, 4, 7);
-#     =(2015, 2, 3, 6, 11);    
+#    = (2014, 1, 2, 4, 7);
+     =(2015, 2, 3, 5, 9);    
     my @results;
     my $scidata = "$FindBin::RealBin/data_sci_$year.csv";
     open my $fh, "<", $scidata or die "$scidata: $!";
@@ -49,7 +49,7 @@ sub main{
     while(<$fh>){
         chomp;
         my @a = split(/,/);
-        $a[$IF_index] = 0 unless $a[$IF_index];
+        $a[$IF_index] = 0 unless $a[$IF_index] =~ /^\d+\.\d+$/;
         push @results,[@a] if $a[$journal_title_index] =~ /$pattern/i;
     }
     close $fh;
